@@ -13,6 +13,10 @@ client_secret*.json
 .next/
 out/
 
+# credentials & config
+redirect_uris.txt
+
 # misc
 .DS_Store
 *.pem
+.vercel
