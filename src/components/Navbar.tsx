@@ -15,6 +15,18 @@ export default function Navbar() {
           Vizuara Email Agent
         </Link>
         <div className="flex items-center gap-4">
+          <Link
+            href="/inbox"
+            className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            Inbox
+          </Link>
+          <Link
+            href="/history"
+            className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            History
+          </Link>
           <span className="text-sm text-gray-500">{session.user.email}</span>
           {session.user.image && (
             <img

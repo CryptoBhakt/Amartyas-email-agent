@@ -16,10 +16,19 @@ interface Email {
   receivedAt: string;
 }
 
+interface PromptContext {
+  systemPrompt: string;
+  userPrompt: string;
+  ragCoursesUsed: string;
+  originalEmail: string;
+  instructions: string;
+}
+
 interface Draft {
   id: string;
   ai_draft_body: string;
   model_used: string;
+  prompt_context: PromptContext;
 }
 
 export default function InboxPage() {
@@ -42,6 +51,7 @@ export default function InboxPage() {
 
   // Editor state
   const [showPreview, setShowPreview] = useState(false);
+  const [showContext, setShowContext] = useState(false);
 
   // Feedback state
   const [starRating, setStarRating] = useState(0);
@@ -169,6 +179,7 @@ export default function InboxPage() {
     setFeedbackText("");
     setFeedbackSubmitted(false);
     setShowPreview(false);
+    setShowContext(false);
     setError(null);
   }
 
@@ -346,6 +357,54 @@ export default function InboxPage() {
                             className="w-full rounded-lg border border-gray-300 p-4 text-sm font-mono focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
                           />
                         )}
+                        {/* Full LLM Context */}
+                        <div className="mt-3">
+                          <button
+                            onClick={() => setShowContext(!showContext)}
+                            className="text-xs font-medium text-blue-600 hover:text-blue-800 transition-colors"
+                          >
+                            {showContext
+                              ? "▼ Hide Full LLM Context"
+                              : "▶ Show Full LLM Context"}
+                          </button>
+                          {showContext && draft.prompt_context && (
+                            <div className="mt-2 space-y-3 rounded-lg border border-gray-200 bg-gray-50 p-4 max-h-[32rem] overflow-y-auto">
+                              <div>
+                                <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wide mb-1">
+                                  System Prompt
+                                </h4>
+                                <pre className="text-xs font-mono text-gray-700 whitespace-pre-wrap bg-white rounded p-3 border border-gray-200">
+                                  {draft.prompt_context.systemPrompt}
+                                </pre>
+                              </div>
+                              <div>
+                                <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wide mb-1">
+                                  Original Email
+                                </h4>
+                                <pre className="text-xs font-mono text-gray-700 whitespace-pre-wrap bg-white rounded p-3 border border-gray-200">
+                                  {draft.prompt_context.originalEmail}
+                                </pre>
+                              </div>
+                              <div>
+                                <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wide mb-1">
+                                  RAG Context ({draft.prompt_context.ragCoursesUsed === "No specific course matches found." ? "0" : draft.prompt_context.ragCoursesUsed.split("\n\n").length} courses retrieved)
+                                </h4>
+                                <pre className="text-xs font-mono text-gray-700 whitespace-pre-wrap bg-white rounded p-3 border border-gray-200">
+                                  {draft.prompt_context.ragCoursesUsed}
+                                </pre>
+                              </div>
+                              <div>
+                                <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wide mb-1">
+                                  Instructions
+                                </h4>
+                                <pre className="text-xs font-mono text-gray-700 whitespace-pre-wrap bg-white rounded p-3 border border-gray-200">
+                                  {draft.prompt_context.instructions}
+                                </pre>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
                         <div className="mt-4 flex items-center justify-between">
                           <p className="text-xs text-gray-400">
                             Review and edit the draft, then click Send to

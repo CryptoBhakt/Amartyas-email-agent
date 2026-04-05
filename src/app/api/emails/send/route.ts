@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { sendGmailReply } from "@/lib/gmail";
+import { getValidAccessToken } from "@/lib/google-auth";
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession();
@@ -25,24 +26,23 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Get user with tokens
+  // Get user
   const { data: user } = await supabaseAdmin
     .from("users")
-    .select("id, google_access_token")
+    .select("id")
     .eq("email", session.user.email)
     .single();
 
-  if (!user?.google_access_token) {
-    return NextResponse.json(
-      { error: "No access token. Please re-login." },
-      { status: 401 }
-    );
+  if (!user) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
   try {
+    const accessToken = await getValidAccessToken(session.user.email);
+
     // Send via Gmail
     const gmailSentId = await sendGmailReply(
-      user.google_access_token,
+      accessToken,
       fromEmail,
       subject || "",
       finalBody,

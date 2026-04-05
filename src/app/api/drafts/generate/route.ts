@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
         ai_draft_body: result.draftBody,
         model_used: result.model,
         rag_context: result.ragContext,
-        prompt_used: result.prompt,
+        prompt_used: JSON.stringify(result.promptContext),
       })
       .select()
       .single();
@@ -70,7 +70,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: draftError.message }, { status: 500 });
     }
 
-    return NextResponse.json({ draft });
+    return NextResponse.json({
+      draft: {
+        ...draft,
+        prompt_context: result.promptContext,
+      },
+    });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
