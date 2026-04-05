@@ -36,19 +36,35 @@ const handler = NextAuth({
     async signIn({ user, account }) {
       if (!user.email || !account) return false;
 
-      // Upsert user in Supabase
-      await supabaseAdmin.from("users").upsert(
-        {
-          id: user.id,
+      // Check if user exists
+      const { data: existing } = await supabaseAdmin
+        .from("users")
+        .select("id")
+        .eq("email", user.email)
+        .single();
+
+      if (existing) {
+        // Update tokens
+        await supabaseAdmin
+          .from("users")
+          .update({
+            name: user.name,
+            avatar_url: user.image,
+            google_access_token: account.access_token,
+            google_refresh_token: account.refresh_token,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", existing.id);
+      } else {
+        // Insert new user (let Supabase generate UUID)
+        await supabaseAdmin.from("users").insert({
           email: user.email,
           name: user.name,
           avatar_url: user.image,
           google_access_token: account.access_token,
           google_refresh_token: account.refresh_token,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "email" }
-      );
+        });
+      }
 
       return true;
     },
