@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Vizuara Email Agent",
+  title: "Your Email Agent",
   description: "AI-powered email reply agent for Vizuara courses",
 };
 

@@ -7,7 +7,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center">
       <div className="w-full max-w-md rounded-xl bg-white p-8 shadow-lg">
         <h1 className="mb-2 text-2xl font-bold text-center">
-          Vizuara Email Agent
+          Your Email Agent
         </h1>
         <p className="mb-8 text-center text-gray-500">
           Sign in to manage your email replies
