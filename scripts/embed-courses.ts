@@ -46,7 +46,7 @@ function buildContentChunk(row: CourseRow): string {
 }
 
 async function main() {
-  const csvPath = path.join(__dirname, "..", "vizuara_courses_dummy_dataset_150.csv");
+  const csvPath = path.join(__dirname, "..", "courses_dummy_dataset_150.csv");
   const csvContent = fs.readFileSync(csvPath, "utf-8");
   const records: CourseRow[] = parse(csvContent, {
     columns: true,
